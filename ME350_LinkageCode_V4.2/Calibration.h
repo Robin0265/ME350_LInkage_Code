@@ -1,7 +1,7 @@
 #ifndef __CALIBRATION_H_
 #define __CALIBRATION_H_
 
-void Calib_State(void);
-void Calib_Process(int *LimitSwitch_L, int *LimitSwitch_R, float CALIB_VOLT);
+int Calib_State(int LimitSwitchPin_Left, int LimitSwitchPin_Right);
+float Calib_Process(int LimitSwitchPin_Left, int LimitSwitchPin_Right, float desiredvoltage);
 
 #endif

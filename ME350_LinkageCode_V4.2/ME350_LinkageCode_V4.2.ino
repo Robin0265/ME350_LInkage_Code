@@ -3,7 +3,7 @@
 // 
 #define TRUE 1
 #define FALSE 0
-int CALIB_SWITCH = FALSE; 
+int CALIB_SWITCH = FALSE;                     // Switch Original to Modified Calibration Process 
 #include "Calibration.h"                      // Modified Calibration Function Included
 //////////////////////////////////////////////
 // DEFINE CONSTANTS AND GLOBAL VARIABLES:   //
@@ -74,7 +74,7 @@ long previousVelCompTime   = 0; // [microseconds] System clock value the last ti
 //** High-level behavior of the controller:  **//
 // CONSTANTS:
 // Target positions:
-const int CALIBRATION_VOLTAGE  = -4; // [Volt] Motor voltage used during the calibration process
+const float CALIBRATION_VOLTAGE  = -4; // [Volt] Motor voltage used during the calibration process
 const int TARGET_1_POSITION    = 0;                    // [encoder counts] Motor position corresponding to first target
 const int TARGET_2_POSITION    = 253;                  // [encoder counts] Motor position corresponding to second target
 const int TARGET_3_POSITION    = 493;                  // [encoder counts] Motor position corresponding to third target
@@ -112,16 +112,17 @@ unsigned long lastExecutionTime = 0; // [microseconds] System clock value at the
 const int PIN_NR_ENCODER_A        = 2;  // Never change these, since the interrupts are attached to pins 2 and 3
 const int PIN_NR_ENCODER_B        = 3;  // Never change these, since the interrupts are attached to pins 2 and 3
 const int PIN_NR_ON_OFF_SWITCH    = 5;  // Connected to toggle switch (turns mechanism on and off)
-const int PIN_NRL_LIMIT_SWITCH    = 11;  // Connected to limit switch (mechanism calibration)
+const int LIMIT_SWITCH_LEFT       = 11; // Connected to left limit switch (mechanism calibration)
+const int LIMIT_SWITCH_RIGHT      = 8;  // Connected to Right limit switch (mechanism calibration)
 const int PIN_NR_PWM_OUTPUT       = 10; // Connected to H Bridge (controls motor speed)
 const int PIN_NR_PWM_DIRECTION_1  = 12; // Connected to H Bridge (controls motor direction)
-const int PIN_NR_PWM_DIRECTION_2  = 13;  // Connected to H Bridge (controls motor direction)
+const int PIN_NR_PWM_DIRECTION_2  = 13; // Connected to H Bridge (controls motor direction)
 const int PIN_PROXSENSE1          = A0; // Connected to proximity sensor 1
 const int PIN_PROXSENSE2          = A2; // Connected to proximity sensor 2
 const int PIN_POTENTIOMETER       = A3; // Connected to potentiometer used to test target positions
 
 
-// Add this line of code if you want to use two limit switches; const int PIN_NRL_LIMIT_SWITCH_2  = 11
+// Add this line of code if you want to use two limit switches; const int LIMIT_SWITCH_LEFT_2  = 11
 // ^KEEP IN MIND THAT YOU HAVE TO ADD CODE DOWNSTREAM (FOR EXAMPLE YOU NEED TO ADD THIS VARIABLE IN THE DECLARATION SECTION
 
 // End of CONSTANTS AND GLOBAL VARIABLES
@@ -137,7 +138,7 @@ void setup() {
   pinMode(PIN_NR_ENCODER_A,        INPUT_PULLUP);
   pinMode(PIN_NR_ENCODER_B,        INPUT_PULLUP);
   pinMode(PIN_NR_ON_OFF_SWITCH,    INPUT);
-  pinMode(PIN_NRL_LIMIT_SWITCH,    INPUT);
+  pinMode(LIMIT_SWITCH_LEFT,    INPUT);
   pinMode(PIN_PROXSENSE1,          INPUT); 
   pinMode(PIN_PROXSENSE2,          INPUT);
   pinMode(PIN_NR_PWM_OUTPUT,       OUTPUT);
@@ -199,17 +200,40 @@ void loop() {
       // We don't have to do anything here since this state is only used to set
       // a fixed output voltage.  This happens further below.
       
-      // Decide what to do next:
-      if (digitalRead(PIN_NRL_LIMIT_SWITCH)==HIGH && motorVelocity==0) { 
+      if(CALIB_SWITCH == FALSE)
+      {
+        if (digitalRead(LIMIT_SWITCH_LEFT)==HIGH && motorVelocity==0) { 
         // We reached the endstop.  Update the motor position to the limit:
         // (NOTE: If the limit switch is on the right, this must be UPPER_BOUND)
+        
         motorPosition = LOWER_BOUND;  
         // Reset the error integrator:
         integralError = 0;
         // Calibration is finalized. Transition into DETERMINE_ACTIVE_TARGETS state
         Serial.println("State transition from CALIBRATE to DETERMINE_ACTIVE_TARGETS");
         state = DETERMINE_ACTIVE_TARGETS;
-      } 
+        }
+      }
+      else
+      {
+        // Calib_State
+        if(Calib_State(LIMIT_SWITCH_LEFT, LIMIT_SWITCH_RIGHT))
+        {
+          motorPosition = LOWER_BOUND;              // Initial Position Setup  
+          /*Change Modified Target Position Here*/
+
+        // Reset the error integrator:
+          integralError = 0;
+        // Calibration is finalized. Transition into DETERMINE_ACTIVE_TARGETS state
+          Serial.println("State transition from CALIBRATE to DETERMINE_ACTIVE_TARGETS");
+          state = DETERMINE_ACTIVE_TARGETS;
+        }
+        
+                 // Modified Code Here
+      }
+
+      // Decide what to do next:
+       
       // Otherwise we continue calibrating
       break;
 
@@ -344,7 +368,7 @@ void loop() {
 
   //******************************************************************************//
   // Recalibrate if we are in the leftmost position
-  if (digitalRead(PIN_NRL_LIMIT_SWITCH)==HIGH && motorVelocity==0) { 
+  if (digitalRead(LIMIT_SWITCH_LEFT)==HIGH && motorVelocity==0) { 
         // We reached the endstop.  Update the motor position to the limit:
         // (NOTE: If the limit switch is on the right, this must be UPPER_BOUND)
         motorPosition = LOWER_BOUND;  
@@ -398,14 +422,13 @@ void loop() {
     // fixed voltage to move against one of the end-stops.
     if (state==CALIBRATE) {
       // add calibration code here
-      if(CALIB_SWITCH == TRUE)
+      if(CALIB_SWITCH == FALSE)
       {
-        ;                       // Modified Code
+        desiredVoltage = CALIBRATION_VOLTAGE;                       // Original Code  
       }
       else
       {
-        desiredVoltage = CALIBRATION_VOLTAGE;                       // Original Code
-        
+        desiredVoltage = Calib_Process(LIMIT_SWITCH_LEFT, LIMIT_SWITCH_RIGHT, CALIBRATION_VOLTAGE);                                                           // Modified Code
       }
     }
   } else { 
