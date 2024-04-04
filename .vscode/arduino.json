@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "programmer": "avrisp",
+    "sketch": "ME350_LinkageCode_V4.2\\ME350_LinkageCode_V4.2.ino"
+}
