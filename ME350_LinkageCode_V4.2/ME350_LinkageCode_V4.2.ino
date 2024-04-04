@@ -24,18 +24,18 @@ int state = CALIBRATE;
 //** Proximity Sensors or Potentiometer: **//
 // CONSTANTS: 
 // Definition of proximity sensor thresholds for each target:
-const int TARGET1_PROXIMITYSENSE1_MIN = 0;     // [proximity sensor counts] Min value prox sensor 1 reads when target 1 is active
-const int TARGET2_PROXIMITYSENSE1_MIN = 0;     // [proximity sensor counts] Min value prox sensor 1 reads when target 2 is active
-const int TARGET2_PROXIMITYSENSE1_MAX = 0;     // [proximity sensor counts] Max value prox sensor 1 reads when target 2 is active
-const int TARGET3_PROXIMITYSENSE1_MIN = 0;     // [proximity sensor counts] Min value prox sensor 1 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE1_MAX = 0;     // [proximity sensor counts] Max value prox sensor 1 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE2_MIN = 0;     // [proximity sensor counts] Min value prox sensor 2 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE2_MAX = 0;     // [proximity sensor counts] Max value prox sensor 2 reads when target 3 is active
-const int TARGET4_PROXIMITYSENSE2_MIN = 0;     // [proximity sensor counts] Min value prox sensor 2 reads when target 4 is active
-const int TARGET4_PROXIMITYSENSE2_MAX = 0;     // [proximity sensor counts] Max value prox sensor 2 reads when target 4 is active
-const int TARGET5_PROXIMITYSENSE2_MIN = 0;     // [proximity sensor counts] Min value prox sensor 2 reads when target 5 is active
-const int TARGETNONE_PROXIMITYSENSE1_MAX = 0;  // [proximity sensor counts] Max value prox sensor 1 reads when no target is active
-const int TARGETNONE_PROXIMITYSENSE2_MAX = 0;  // [proximity sensor counts] Max value prox sensor 2 reads when no target is active
+const int TARGET1_PROXIMITYSENSE1_MIN = 491;     // [proximity sensor counts] Min value prox sensor 1 reads when target 1 is active
+const int TARGET2_PROXIMITYSENSE1_MIN = 216;     // [proximity sensor counts] Min value prox sensor 1 reads when target 2 is active
+const int TARGET2_PROXIMITYSENSE1_MAX = 296;     // [proximity sensor counts] Max value prox sensor 1 reads when target 2 is active
+const int TARGET3_PROXIMITYSENSE1_MIN = 188;     // [proximity sensor counts] Min value prox sensor 1 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE1_MAX = 247;     // [proximity sensor counts] Max value prox sensor 1 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE2_MIN = 115;     // [proximity sensor counts] Min value prox sensor 2 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE2_MAX = 132;     // [proximity sensor counts] Max value prox sensor 2 reads when target 3 is active
+const int TARGET4_PROXIMITYSENSE2_MIN = 160;     // [proximity sensor counts] Min value prox sensor 2 reads when target 4 is active
+const int TARGET4_PROXIMITYSENSE2_MAX = 180;     // [proximity sensor counts] Max value prox sensor 2 reads when target 4 is active
+const int TARGET5_PROXIMITYSENSE2_MIN = 399;     // [proximity sensor counts] Min value prox sensor 2 reads when target 5 is active
+const int TARGETNONE_PROXIMITYSENSE1_MAX = 213;  // [proximity sensor counts] Max value prox sensor 1 reads when no target is active
+const int TARGETNONE_PROXIMITYSENSE2_MAX = 89;  // [proximity sensor counts] Max value prox sensor 2 reads when no target is active
 // Definition of target variables for array indexing
 const int TARGET1  = 0;   // For indexing into activeTargets array, activeTargets[0] corresponds to Target 1
 const int TARGET2  = 1;   // For indexing into activeTargets array, activeTargets[1] corresponds to Target 2
@@ -74,16 +74,16 @@ long previousVelCompTime   = 0; // [microseconds] System clock value the last ti
 //** High-level behavior of the controller:  **//
 // CONSTANTS:
 // Target positions:
-const int CALIBRATION_VOLTAGE  = -1; // [Volt] Motor voltage used during the calibration process
-const int TARGET_1_POSITION    = 0; // [encoder counts] Motor position corresponding to first target
-const int TARGET_2_POSITION    = 0; // [encoder counts] Motor position corresponding to second target
-const int TARGET_3_POSITION    = 0; // [encoder counts] Motor position corresponding to third target
-const int TARGET_4_POSITION    = 0; // [encoder counts] Motor position corresponding to fourth target
-const int TARGET_5_POSITION    = 0; // [encoder counts] Motor position corresponding to fifth target
-const int WAIT_POSITION        = TARGET_3_POSITION; // [encoder counts] Motor position corresponding to a wait position (when no targets are active)
-const int LOWER_BOUND          = TARGET_1_POSITION; // [encoder counts] Position of the left end stop
-const int UPPER_BOUND          = TARGET_4_POSITION; // [encoder counts] Position of the right end stop
-const int TARGET_BAND          = 5; // [encoder counts] "Close enough" range when moving towards a target.
+const int CALIBRATION_VOLTAGE  = -4; // [Volt] Motor voltage used during the calibration process
+const int TARGET_1_POSITION    = 0;                    // [encoder counts] Motor position corresponding to first target
+const int TARGET_2_POSITION    = 253;                  // [encoder counts] Motor position corresponding to second target
+const int TARGET_3_POSITION    = 493;                  // [encoder counts] Motor position corresponding to third target
+const int TARGET_4_POSITION    = 1480;                 // [encoder counts] Motor position corresponding to fourth target
+const int TARGET_5_POSITION    = 1372;                 // [encoder counts] Motor position corresponding to fifth target
+const int WAIT_POSITION        = 974;                  // [encoder counts] Motor position corresponding to a wait position
+const int LOWER_BOUND          = TARGET_1_POSITION;    // [encoder counts] Position of the left end stop
+const int UPPER_BOUND          = TARGET_4_POSITION;    // [encoder counts] Position of the right end stop
+const int TARGET_BAND          = 5;                   // [encoder counts] "Close enough" range when moving towards a target.
 // Timing:
 //const long  WAIT_TIME          = 0; // [microseconds] Time waiting for the target to drop.
                                       // TBD - implement a timer so if the target doesn't drop, the linkage moves to a different target
@@ -92,11 +92,11 @@ const int TARGET_BAND          = 5; // [encoder counts] "Close enough" range whe
 
 //** PID Controller  **//
 // CONSTANTS:
-const float KP                    = 0; // [Volt / encoder counts] P-Gain
-const float KI                    = 0; // [Volt / (encoder counts * seconds)] I-Gain
-const float KD                    = 0; // [Volt * seconds / encoder counts] D-Gain
-const float SUPPLY_VOLTAGE        = 0; // [Volt] Supply voltage at the HBridge
-const float FRICTION_COMP_VOLTAGE = 0; // [Volt] Voltage needed to overcome friction
+const float KP                    = 0.10; // [Volt / encoder counts] P-Gain
+const float KI                    = 0.02; // [Volt / (encoder counts * seconds)] I-Gain
+const float KD                    = 0.01; // [Volt * seconds / encoder counts] D-Gain
+const float SUPPLY_VOLTAGE        = 9; // [Volt] Supply voltage at the HBridge
+const float FRICTION_COMP_VOLTAGE = 3.3; // [Volt] Voltage needed to overcome friction
 // VARIABLES:
 int desiredPosition  = 0; // [encoder counts] desired motor position
 float positionError  = 0; // [encoder counts] Position error
@@ -112,13 +112,13 @@ unsigned long lastExecutionTime = 0; // [microseconds] System clock value at the
 const int PIN_NR_ENCODER_A        = 2;  // Never change these, since the interrupts are attached to pins 2 and 3
 const int PIN_NR_ENCODER_B        = 3;  // Never change these, since the interrupts are attached to pins 2 and 3
 const int PIN_NR_ON_OFF_SWITCH    = 5;  // Connected to toggle switch (turns mechanism on and off)
-const int PIN_NRL_LIMIT_SWITCH    = 8;  // Connected to limit switch (mechanism calibration)
-const int PIN_NR_PWM_OUTPUT       = 11; // Connected to H Bridge (controls motor speed)
+const int PIN_NRL_LIMIT_SWITCH    = 11;  // Connected to limit switch (mechanism calibration)
+const int PIN_NR_PWM_OUTPUT       = 10; // Connected to H Bridge (controls motor speed)
 const int PIN_NR_PWM_DIRECTION_1  = 12; // Connected to H Bridge (controls motor direction)
 const int PIN_NR_PWM_DIRECTION_2  = 13;  // Connected to H Bridge (controls motor direction)
 const int PIN_PROXSENSE1          = A0; // Connected to proximity sensor 1
-const int PIN_PROXSENSE2          = A1; // Connected to proximity sensor 2
-const int PIN_POTENTIOMETER       = A2; // Connected to potentiometer used to test target positions
+const int PIN_PROXSENSE2          = A2; // Connected to proximity sensor 2
+const int PIN_POTENTIOMETER       = A3; // Connected to potentiometer used to test target positions
 
 
 // Add this line of code if you want to use two limit switches; const int PIN_NRL_LIMIT_SWITCH_2  = 11
@@ -405,6 +405,7 @@ void loop() {
       else
       {
         desiredVoltage = CALIBRATION_VOLTAGE;                       // Original Code
+        
       }
     }
   } else { 
