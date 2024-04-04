@@ -9,7 +9,7 @@ int LS_CNT_L = 0, LS_CNT_R = 0;
 
 float Calib_Process(int LimitSwitchPin_Left, int LimitSwitchPin_Right, float desiredvoltage)
 {
-    int voltage_return = 0; 
+    int voltage_return = desiredvoltage; 
     // int LS_L_CNT = 0, LS_R_CNT = 0;
     if((digitalRead(LimitSwitchPin_Left) == HIGH) || (digitalRead(LimitSwitchPin_Right) == HIGH))
     {
