@@ -24,18 +24,18 @@ int state = CALIBRATE;
 //** Proximity Sensors or Potentiometer: **//
 // CONSTANTS: 
 // Definition of proximity sensor thresholds for each target:
-const int TARGET1_PROXIMITYSENSE1_MIN = 491;     // [proximity sensor counts] Min value prox sensor 1 reads when target 1 is active
-const int TARGET2_PROXIMITYSENSE1_MIN = 216;     // [proximity sensor counts] Min value prox sensor 1 reads when target 2 is active
-const int TARGET2_PROXIMITYSENSE1_MAX = 296;     // [proximity sensor counts] Max value prox sensor 1 reads when target 2 is active
-const int TARGET3_PROXIMITYSENSE1_MIN = 188;     // [proximity sensor counts] Min value prox sensor 1 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE1_MAX = 247;     // [proximity sensor counts] Max value prox sensor 1 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE2_MIN = 115;     // [proximity sensor counts] Min value prox sensor 2 reads when target 3 is active
-const int TARGET3_PROXIMITYSENSE2_MAX = 132;     // [proximity sensor counts] Max value prox sensor 2 reads when target 3 is active
-const int TARGET4_PROXIMITYSENSE2_MIN = 160;     // [proximity sensor counts] Min value prox sensor 2 reads when target 4 is active
+const int TARGET1_PROXIMITYSENSE1_MIN = 455;     // [proximity sensor counts] Min value prox sensor 1 reads when target 1 is active
+const int TARGET2_PROXIMITYSENSE1_MIN = 163;     // [proximity sensor counts] Min value prox sensor 1 reads when target 2 is active
+const int TARGET2_PROXIMITYSENSE1_MAX = 172;     // [proximity sensor counts] Max value prox sensor 1 reads when target 2 is active
+const int TARGET3_PROXIMITYSENSE1_MIN = 100;     // [proximity sensor counts] Min value prox sensor 1 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE1_MAX = 110;     // [proximity sensor counts] Max value prox sensor 1 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE2_MIN = 90;     // [proximity sensor counts] Min value prox sensor 2 reads when target 3 is active
+const int TARGET3_PROXIMITYSENSE2_MAX = 110;     // [proximity sensor counts] Max value prox sensor 2 reads when target 3 is active
+const int TARGET4_PROXIMITYSENSE2_MIN = 150;     // [proximity sensor counts] Min value prox sensor 2 reads when target 4 is active
 const int TARGET4_PROXIMITYSENSE2_MAX = 180;     // [proximity sensor counts] Max value prox sensor 2 reads when target 4 is active
-const int TARGET5_PROXIMITYSENSE2_MIN = 399;     // [proximity sensor counts] Min value prox sensor 2 reads when target 5 is active
-const int TARGETNONE_PROXIMITYSENSE1_MAX = 213;  // [proximity sensor counts] Max value prox sensor 1 reads when no target is active
-const int TARGETNONE_PROXIMITYSENSE2_MAX = 89;  // [proximity sensor counts] Max value prox sensor 2 reads when no target is active
+const int TARGET5_PROXIMITYSENSE2_MIN = 390;     // [proximity sensor counts] Min value prox sensor 2 reads when target 5 is active
+const int TARGETNONE_PROXIMITYSENSE1_MAX = 50;  // [proximity sensor counts] Max value prox sensor 1 reads when no target is active
+const int TARGETNONE_PROXIMITYSENSE2_MAX = 80;  // [proximity sensor counts] Max value prox sensor 2 reads when no target is active
 // Definition of target variables for array indexing
 const int TARGET1  = 0;   // For indexing into activeTargets array, activeTargets[0] corresponds to Target 1
 const int TARGET2  = 1;   // For indexing into activeTargets array, activeTargets[1] corresponds to Target 2
@@ -74,12 +74,12 @@ long previousVelCompTime   = 0; // [microseconds] System clock value the last ti
 //** High-level behavior of the controller:  **//
 // CONSTANTS:
 // Target positions:
-const float CALIBRATION_VOLTAGE  = -4; // [Volt] Motor voltage used during the calibration process
+const float CALIBRATION_VOLTAGE  = -2.8; // [Volt] Motor voltage used during the calibration process
 const int TARGET_1_POSITION    = 0;                    // [encoder counts] Motor position corresponding to first target
-const int TARGET_2_POSITION    = 253;                  // [encoder counts] Motor position corresponding to second target
-const int TARGET_3_POSITION    = 493;                  // [encoder counts] Motor position corresponding to third target
-const int TARGET_4_POSITION    = 1480;                 // [encoder counts] Motor position corresponding to fourth target
-const int TARGET_5_POSITION    = 1372;                 // [encoder counts] Motor position corresponding to fifth target
+const int TARGET_2_POSITION    = 288;                  // [encoder counts] Motor position corresponding to second target
+const int TARGET_3_POSITION    = 560;                  // [encoder counts] Motor position corresponding to third target
+const int TARGET_4_POSITION    = 1527;                 // [encoder counts] Motor position corresponding to fourth target
+const int TARGET_5_POSITION    = 1449;                 // [encoder counts] Motor position corresponding to fifth target
 const int WAIT_POSITION        = 974;                  // [encoder counts] Motor position corresponding to a wait position
 const int LOWER_BOUND          = TARGET_1_POSITION;    // [encoder counts] Position of the left end stop
 const int UPPER_BOUND          = TARGET_4_POSITION;    // [encoder counts] Position of the right end stop
@@ -92,11 +92,11 @@ const int TARGET_BAND          = 5;                   // [encoder counts] "Close
 
 //** PID Controller  **//
 // CONSTANTS:
-const float KP                    = 0.10; // [Volt / encoder counts] P-Gain
-const float KI                    = 0.02; // [Volt / (encoder counts * seconds)] I-Gain
-const float KD                    = 0.01; // [Volt * seconds / encoder counts] D-Gain
+const float KP             = 0.1;                      // [Volt / encoder counts] P-Gain
+const float KI             = 0.01;                     // [Volt / (encoder counts * seconds)] I-Gain
+const float KD             = 0.008;                     // [Volt * seconds / encoder counts] D-Gain
 const float SUPPLY_VOLTAGE        = 9; // [Volt] Supply voltage at the HBridge
-const float FRICTION_COMP_VOLTAGE = 3.3; // [Volt] Voltage needed to overcome friction
+const float FRICTION_COMP_VOLTAGE = 2.5; // [Volt] Voltage needed to overcome friction
 // VARIABLES:
 int desiredPosition  = 0; // [encoder counts] desired motor position
 float positionError  = 0; // [encoder counts] Position error
